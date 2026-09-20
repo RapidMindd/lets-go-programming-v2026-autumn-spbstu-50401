@@ -3,9 +3,9 @@ package main
 import "fmt"
 
 func main() {
-	var first_operand, second_operand int
+	var firstOperand, secondOperand int
 	var operator string
-	n, err := fmt.Scan(&first_operand, &second_operand, &operator)
+	n, err := fmt.Scan(&firstOperand, &secondOperand, &operator)
 	if err != nil {
 		switch n {
 		case 0:
@@ -19,17 +19,17 @@ func main() {
 	}
 	switch operator {
 	case "+":
-		fmt.Println(first_operand + second_operand)
+		fmt.Println(firstOperand + secondOperand)
 	case "-":
-		fmt.Println(first_operand - second_operand)
+		fmt.Println(firstOperand - secondOperand)
 	case "*":
-		fmt.Println(first_operand * second_operand)
+		fmt.Println(firstOperand * secondOperand)
 	case "/":
-		if second_operand == 0 {
+		if secondOperand == 0 {
 			fmt.Println("Division by zero")
 			return
 		}
-		fmt.Println(first_operand / second_operand)
+		fmt.Println(firstOperand / secondOperand)
 	default:
 		fmt.Println("Invalid operation")
 	}
