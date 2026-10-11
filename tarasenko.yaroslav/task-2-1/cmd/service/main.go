@@ -6,29 +6,39 @@ import (
 )
 
 func main() {
-	var N int
-	_, err := fmt.Scan(&N)
+	var departments int
+
+	_, err := fmt.Scan(&departments)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+
 		return
 	}
-	for i := 0; i < N; i++ {
-		var K int
-		_, err := fmt.Scan(&K)
+
+	for range departments {
+		var employees int
+
+		_, err := fmt.Scan(&employees)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
+
 			return
 		}
-		var minTemp int = 15
-		var maxTemp int = 30
+
+		minTemp := 15
+		maxTemp := 30
+
 		var clientComparator string
+
 		var clientWish int
-		for j := 0; j < K; j++ {
+		for range employees {
 			_, err := fmt.Scan(&clientComparator, &clientWish)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err)
+
 				return
 			}
+
 			switch clientComparator {
 			case ">=":
 				minTemp = max(minTemp, clientWish)
@@ -37,6 +47,7 @@ func main() {
 			default:
 				fmt.Fprintln(os.Stderr, "Incorrect comparator sign")
 			}
+
 			if minTemp <= maxTemp {
 				fmt.Println(minTemp)
 			} else {
