@@ -2,4 +2,9 @@ module github.com/RapidMindd/lets-go-programming-v2026-autumn-spbstu-50401/taras
 
 go 1.22
 
-require gopkg.in/yaml.v3 v3.0.1
+require (
+	golang.org/x/net v0.29.0
+	gopkg.in/yaml.v3 v3.0.1
+)
+
+require golang.org/x/text v0.18.0 // indirect
