@@ -41,6 +41,47 @@ type OutputValute struct {
 	Value    float64 `json:"value"`
 }
 
+func loadConfig(filePath string) Config {
+	flag.Parse()
+
+	if filePath == "" {
+		panic("config flag is required")
+	}
+
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+
+	var config Config
+
+	err = yaml.Unmarshal(data, &config)
+	if err != nil {
+		panic(err)
+	}
+
+	return config
+}
+
+func parseXML(filePath string) ValCurs {
+	inputData, err := os.ReadFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+
+	decoder := xml.NewDecoder(bytes.NewReader(inputData))
+	decoder.CharsetReader = charset.NewReaderLabel
+
+	var parsedData ValCurs
+
+	err = decoder.Decode(&parsedData)
+	if err != nil {
+		panic(err)
+	}
+
+	return parsedData
+}
+
 func saveToJSON(filePath string, data []OutputValute) {
 	jsonData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
@@ -61,44 +102,10 @@ func saveToJSON(filePath string, data []OutputValute) {
 	}
 }
 
-func main() {
-	configPath := flag.String("config", "", "Path to YAML config")
-	flag.Parse()
+func processValutes(valutes []Valute) []OutputValute {
+	outputData := make([]OutputValute, 0, len(valutes))
 
-	if *configPath == "" {
-		panic("config flag is required")
-	}
-
-	data, err := os.ReadFile(*configPath)
-	if err != nil {
-		panic(err)
-	}
-
-	var config Config
-
-	err = yaml.Unmarshal(data, &config)
-	if err != nil {
-		panic(err)
-	}
-
-	inputData, err := os.ReadFile(config.InputFile)
-	if err != nil {
-		panic(err)
-	}
-
-	decoder := xml.NewDecoder(bytes.NewReader(inputData))
-	decoder.CharsetReader = charset.NewReaderLabel
-
-	var parsedData ValCurs
-
-	err = decoder.Decode(&parsedData)
-	if err != nil {
-		panic(err)
-	}
-
-	outputData := make([]OutputValute, 0, len(parsedData.Valutes))
-
-	for _, val := range parsedData.Valutes {
+	for _, val := range valutes {
 		pointValue := strings.ReplaceAll(val.Value, ",", ".")
 
 		floatValue, err := strconv.ParseFloat(pointValue, 64)
@@ -117,5 +124,19 @@ func main() {
 		return outputData[i].Value > outputData[j].Value
 	})
 
+	return outputData
+}
+
+func main() {
+	configPath := flag.String("config", "", "Path to YAML config")
+	flag.Parse()
+
+	if *configPath == "" {
+		panic("config flag is required")
+	}
+
+	config := loadConfig(*configPath)
+	parsedData := parseXML(config.InputFile)
+	outputData := processValutes(parsedData.Valutes)
 	saveToJSON(config.OutputFile, outputData)
 }
